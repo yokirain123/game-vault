@@ -6,6 +6,7 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  scroll-behavior: auto;
 }
 
 @theme inline {
@@ -28,5 +29,5 @@ body {
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
-   overflow-x: hidden;
+  overflow-x: hidden;
 }

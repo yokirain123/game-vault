@@ -1,12 +1,13 @@
-import { type Game } from "../../data/gameTypes";
+
 import { IoClose } from "react-icons/io5";
 import { FaSteam } from "react-icons/fa";
+import { type Game } from "../../../data/gameTypes";
 import {
   gameReactionEmoji,
   gameReactionLabels,
-} from "../../data/gameReactions";
+} from "../../../data/gameReactions";
 import Link from "next/link";
-import { gameStatusLabels } from "../../data/gameStatuses";
+import { gameStatusLabels } from "../../../data/gameStatuses";
 
 type GameDetailsPanelProps = {
   selectedGame: Game | null;

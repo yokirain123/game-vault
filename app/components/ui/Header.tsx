@@ -40,9 +40,12 @@ function Header() {
           Ігрові рецензії
         </Link>
 
-        <div className="text-xl font-bold text-white hover:text-[#59B292] transition-colors duration-300 cursor-pointer">
-          Бібліотека
-        </div>
+        <Link href='/collections' className="text-xl font-bold text-white hover:text-[#59B292] transition-colors duration-300 cursor-pointer">
+          Добірки
+        </Link>
+        <Link href='/backlog' className="text-xl font-bold text-white hover:text-[#59B292] transition-colors duration-300 cursor-pointer">
+          Беклог
+        </Link>
       </nav>
       <Logo className="w-15 h-15 text-white hover:scale-120 hover:text-[#59B292] transition-all duration-300 cursor-pointer" />
     </header>

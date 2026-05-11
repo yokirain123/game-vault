@@ -1,16 +1,12 @@
-import { type Game } from "../../data/gameTypes";
-import {
-  gameReactionEmoji,
-  gameReactionLabels,
-} from "../../data/gameReactions";
+import { type Game } from "../../../data/gameTypes";
 
-type GameCardProps = {
+type BacklogCardProps = {
   game: Game;
   isSelected: boolean;
   onSelect: (game: Game) => void;
 };
 
-function GameCard({ game, isSelected, onSelect }: GameCardProps) {
+function BacklogCard({ game, isSelected, onSelect }: BacklogCardProps) {
   return (
     <button
       type="button"
@@ -23,12 +19,6 @@ function GameCard({ game, isSelected, onSelect }: GameCardProps) {
     >
         <div className="flex flex-col ">
             <div className="relative h-44 w-full overflow-hidden rounded-3xl">
-        <span
-          title={gameReactionLabels[game.reaction]}
-          className="absolute top-2 right-2 z-10 shrink-0 text-2xl cursor-help"
-        >
-          {gameReactionEmoji[game.reaction]}
-        </span>
         <img
           src={game.coverImage}
           alt={game.title}
@@ -45,4 +35,4 @@ function GameCard({ game, isSelected, onSelect }: GameCardProps) {
   );
 }
 
-export default GameCard;
+export default BacklogCard;

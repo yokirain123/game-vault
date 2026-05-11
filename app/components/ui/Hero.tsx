@@ -13,25 +13,25 @@ const slides = [
   },
   {
     text: "Рецензії",
-    shape: "skew-x-[3deg] rotate-[1deg]",
+    
     wrapperColor: "bg-[#FFC94D]",
     textColor: "text-background",
   },
   {
-    text: "Бібліотека",
-    shape: "skew-x-[-2deg] rotate-[0deg]",
+    text: "Добірки",
+    
     wrapperColor: "bg-[#9B8EC7]",
     textColor: "text-background",
   },
   {
-    text: "Улюблені ігри",
-    shape: "skew-x-[5deg] rotate-[-1deg]",
+    text: "Беклог",
+    
     wrapperColor: "bg-[#FA6781]",
     textColor: "text-background",
   },
   {
     text: "Рекомендації",
-    shape: "skew-x-[-3deg] rotate-[1deg]",
+    
     wrapperColor: "bg-[#AACDDC]",
     textColor: "text-background",
   },

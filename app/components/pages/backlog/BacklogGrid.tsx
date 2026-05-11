@@ -1,13 +1,13 @@
-import { type Game } from "../../data/gameTypes";
-import GameCard from "./GameCard";
+import { type Game } from "../../../data/gameTypes";
+import BacklogCard from "./BacklogCard";
 
-type GameGridProps = {
+type BacklogGridProps = {
   games: Game[];
   selectedGame: Game | null;
   onSelectGame: (game: Game) => void;
 };
 
-function GameGrid({ games, selectedGame, onSelectGame }: GameGridProps) {
+function BacklogGrid({ games, selectedGame, onSelectGame }: BacklogGridProps) {
   return (
     <div
       className={`
@@ -21,7 +21,7 @@ function GameGrid({ games, selectedGame, onSelectGame }: GameGridProps) {
       `}
     >
       {games.map((game) => (
-        <GameCard
+        <BacklogCard
           key={game.id}
           game={game}
           isSelected={selectedGame?.id === game.id}
@@ -32,4 +32,4 @@ function GameGrid({ games, selectedGame, onSelectGame }: GameGridProps) {
   );
 }
 
-export default GameGrid;
+export default BacklogGrid;

@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 import { IoSearch, IoChevronDown, IoChevronUp } from "react-icons/io5";
-import { type GameReaction } from "../../data/gameTypes";
+import { type GameReaction } from "../../../data/gameTypes";
 import {
   gameReactionEmoji,
   gameReactionLabels,
-} from "../../data/gameReactions";
+} from "../../../data/gameReactions";
 
 type ReviewsFiltersProps = {
   searchQuery: string;
@@ -31,7 +31,6 @@ function ReviewsFilters({
   selectedReaction,
   setSelectedReaction,
   availableGenres,
-  resetFilters,
 }: ReviewsFiltersProps) {
   const [isGenresOpen, setIsGenresOpen] = useState(false);
 

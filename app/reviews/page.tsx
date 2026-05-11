@@ -9,12 +9,11 @@ import {
   mapGameRowToGame,
 } from "../data/gameTypes";
 import Header from "../components/ui/Header";
-import GameCard from "../components/reviews/GameCard";
-import GameDetailsPanel from "../components/reviews/GameDetailsCard";
-import AddReviewButton from "../components/reviews/AddReviewButton";
-import AddReviewModal from "../components/reviews/AddReviewModal";
-import GameGrid from "../components/reviews/GameGrid";
-import ReviewsFilters from "../components/reviews/ReviewsFilter";
+import GameDetailsPanel from "../components/pages/reviews/GameDetailsCard";
+import AddReviewButton from "../components/pages/reviews/AddReviewButton";
+import AddReviewModal from "../components/pages/reviews/AddReviewModal";
+import GameGrid from "../components/pages/reviews/GameGrid";
+import ReviewsFilters from "../components/pages/reviews/ReviewsFilter";
 
 function createSlug(title: string) {
   return title
@@ -56,25 +55,6 @@ function Reviews() {
     GameReaction | "all"
   >("all");
 
-  function handleCloseAddModal() {
-    setIsAddModalOpen(false);
-    setEditingGameId(null);
-
-    setFormData({
-      title: "",
-      coverImage: "",
-      bannerImage: "",
-      genres: "",
-      platforms: "",
-      status: "backlog",
-      reaction: "average" as Game["reaction"],
-      hoursPlayed: "",
-      isFavorite: false,
-      personalReview: "",
-      steamUrl: "",
-    });
-  }
-
   useEffect(() => {
     async function fetchGames() {
       setIsLoading(true);
@@ -82,6 +62,7 @@ function Reviews() {
       const { data, error } = await supabase
         .from("games")
         .select("*")
+        .neq("status", "backlog")
         .order("created_at", { ascending: false });
 
       if (error) {
@@ -279,8 +260,8 @@ function Reviews() {
 
   if (isLoading) {
     return (
-      <section className="w-full bg-zinc-900 px-16 py-20 text-white">
-        <p className="text-zinc-400">Loading games...</p>
+      <section>
+        <Header />
       </section>
     );
   }
@@ -288,7 +269,7 @@ function Reviews() {
   return (
     <div>
       <Header />
-      <section className="w-full px-16 mt-7 py-20 text-white">
+      <section className="w-full px-16 mt-7 pt-20 text-white">
         <div className="">
           <ReviewsFilters
             searchQuery={searchQuery}
@@ -306,7 +287,7 @@ function Reviews() {
           />
         </div>
 
-        <div className="flex items-start gap-8 py-4">
+        <div className="flex items-start gap-8 pt-4">
           <GameGrid
             games={filteredGames}
             selectedGame={selectedGame}
