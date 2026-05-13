@@ -72,13 +72,9 @@
 - React
 - TypeScript
 - Tailwind CSS
-- Tailwind CSS Motion
 - Supabase
 - Supabase Auth
 - PostgreSQL
-- React Icons
-- CSS variables для темізації
-- LocalStorage для збереження теми
 
 ---
 
