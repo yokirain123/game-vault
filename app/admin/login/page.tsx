@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "../../lib/supabaseClient";
+import { createClient } from "../../data/supabaseClient";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -62,7 +62,7 @@ export default function AdminLoginPage() {
   if (isLoading) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-zinc-900 px-6 text-white">
-        <p className="text-zinc-400">Loading...</p>
+        <p className="text-white/50">Loading...</p>
       </main>
     );
   }
@@ -73,16 +73,15 @@ export default function AdminLoginPage() {
         <div className="w-full max-w-md rounded-3xl bg-zinc-800 p-8">
           <h1 className="mb-3 text-3xl font-bold">Admin panel</h1>
 
-          <p className="mb-6 text-sm text-zinc-400">
-            You are logged in as{" "}
-            <span className="text-[#59B292]">{userEmail}</span>
+          <p className="mb-6 text-sm text-white/50">
+            You are logged in as <span className="text-white">{userEmail}</span>
           </p>
 
           <div className="grid gap-3">
             <button
               type="button"
               onClick={() => router.push("/")}
-              className="w-full rounded-xl bg-[#59B292] px-4 py-3 font-bold text-zinc-900 transition hover:bg-[#73d3b2]"
+              className="w-full rounded-xl bg-[#59B292] px-4 py-3 font-bold text-white transition hover:bg-[#73d3b2]"
             >
               Go to site
             </button>

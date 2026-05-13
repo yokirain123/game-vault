@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Header from "../components/ui/Header";
-import { createClient } from "../lib/supabaseClient";
+import { createClient } from "../data/supabaseClient";
 import {
   type Collection,
   type CollectionRow,
@@ -12,13 +12,17 @@ import {
 import { type Game, type GameRow, mapGameRowToGame } from "../data/gameTypes";
 import AddCollectionButton from "../components/pages/collections/addCollectionButton";
 import AddCollectionModal from "../components/pages/collections/addCollectionModal";
+import Footer from "../components/ui/Footer";
 
 function createSlug(title: string) {
-  return title
+  const baseSlug = title
     .toLowerCase()
     .trim()
-    .replace(/[^\w\s-]/g, "")
-    .replace(/\s+/g, "-");
+    .replace(/[^\p{L}\p{N}\s-]/gu, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-");
+
+  return `${baseSlug || "collection"}-${Date.now().toString(36)}`;
 }
 
 function CollectionsPage() {
@@ -132,7 +136,9 @@ function CollectionsPage() {
   }
 
   async function handleDeleteCollection(collectionId: string) {
-    const confirmed = confirm("Are you sure you want to delete this collection?");
+    const confirmed = confirm(
+      "Are you sure you want to delete this collection?",
+    );
 
     if (!confirmed) return;
 
@@ -152,18 +158,20 @@ function CollectionsPage() {
     );
   }
 
-  async function handleSaveCollection(
-    event: React.FormEvent<HTMLFormElement>,
-  ) {
+  async function handleSaveCollection(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     setIsSaving(true);
 
     const collectionPayload = {
-      slug: createSlug(formData.title),
       title: formData.title,
       description: formData.description || null,
       cover_image: formData.coverImage || null,
+    };
+
+    const newCollectionPayload = {
+      ...collectionPayload,
+      slug: createSlug(formData.title),
     };
 
     if (editingCollectionId) {
@@ -223,7 +231,9 @@ function CollectionsPage() {
 
       setCollections((prevCollections) =>
         prevCollections.map((collection) =>
-          collection.id === editingCollectionId ? updatedCollection : collection,
+          collection.id === editingCollectionId
+            ? updatedCollection
+            : collection,
         ),
       );
 
@@ -237,7 +247,7 @@ function CollectionsPage() {
 
     const { data: collectionData, error: collectionError } = await supabase
       .from("collections")
-      .insert(collectionPayload)
+      .insert(newCollectionPayload)
       .select()
       .single();
 
@@ -273,7 +283,10 @@ function CollectionsPage() {
       }
     }
 
-    setCollections((prevCollections) => [createdCollection, ...prevCollections]);
+    setCollections((prevCollections) => [
+      createdCollection,
+      ...prevCollections,
+    ]);
 
     setIsSaving(false);
     setIsCollectionModalOpen(false);
@@ -288,16 +301,16 @@ function CollectionsPage() {
     <div>
       <Header />
 
-      <main className="mt-7 px-16 py-20 text-white">
+      <main className="mt-7 px-16 py-20 text-main">
         <div className="mb-10">
           <h1 className="text-5xl font-bold">Добірки</h1>
-          <p className="mt-3 text-zinc-400">
+          <p className="mt-3 text-main/50">
             Ігри не просто списком, а під конкретний настрій.
           </p>
         </div>
 
         {collections.length === 0 ? (
-          <div className="rounded-3xl bg-zinc-900 p-10 text-center text-zinc-400">
+          <div className="rounded-3xl bg-bg-alt p-10 text-center text-main/50">
             Добірок поки немає.
           </div>
         ) : (
@@ -305,10 +318,10 @@ function CollectionsPage() {
             {collections.map((collection) => (
               <div
                 key={collection.id}
-                className="group overflow-hidden rounded-3xl bg-zinc-900 transition-all duration-300"
+                className="group overflow-hidden rounded-3xl bg-bg-alt/50 transition-all duration-300"
               >
                 <Link href={`/collections/${collection.slug}`}>
-                  <div className="h-56 overflow-hidden bg-zinc-800 hover:brightness-120 hover:contrast-110 transition-all duration-500">
+                  <div className="h-56 overflow-hidden transition-all duration-500 hover:brightness-120 hover:contrast-110">
                     {collection.coverImage ? (
                       <img
                         src={collection.coverImage}
@@ -316,7 +329,7 @@ function CollectionsPage() {
                         className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                       />
                     ) : (
-                      <div className="flex h-full w-full items-center justify-center text-zinc-500">
+                      <div className="flex h-full w-full items-center justify-center text-main">
                         No image
                       </div>
                     )}
@@ -325,7 +338,7 @@ function CollectionsPage() {
                   <div className="p-6">
                     <h2 className="text-2xl font-bold">{collection.title}</h2>
 
-                    <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-zinc-400">
+                    <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-main">
                       {collection.description || "No description yet."}
                     </p>
                   </div>
@@ -336,7 +349,7 @@ function CollectionsPage() {
                     <button
                       type="button"
                       onClick={() => handleEditCollection(collection)}
-                      className="rounded-2xl bg-[#59B292] px-4 py-3 font-bold text-zinc-950 transition hover:bg-[#73d3b2]"
+                      className="rounded-2xl bg-[#59B292] px-4 py-3 font-bold text-main transition hover:bg-[#73d3b2]"
                     >
                       Edit
                     </button>
@@ -344,7 +357,7 @@ function CollectionsPage() {
                     <button
                       type="button"
                       onClick={() => handleDeleteCollection(collection.id)}
-                      className="rounded-2xl bg-red-500 px-4 py-3 font-bold text-white transition hover:bg-red-600"
+                      className="rounded-2xl bg-red-500 px-4 py-3 font-bold text-main transition hover:bg-red-600"
                     >
                       Delete
                     </button>
@@ -372,6 +385,8 @@ function CollectionsPage() {
           isEditing={Boolean(editingCollectionId)}
         />
       </main>
+
+      <Footer />
     </div>
   );
 }

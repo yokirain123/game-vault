@@ -1,26 +1,38 @@
-@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&family=Press+Start+2P&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&family=Press+Start+2P&display=swap");
 
 @import "tailwindcss";
 @plugin "tailwindcss-motion";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
-  --background: #ffffff;
+  --background: #ece9e3;
+  --bg-alt: #c2beb6;
   --foreground: #171717;
+  --accent: #ff3d7e;
+  --main: #171717;
   scroll-behavior: auto;
+}
+
+.dark {
+  --background: #0a0a0a;
+  --bg-alt: #2b2b2b;
+  --foreground: #ededed;
+  --accent: #59B292;
+  --main: #F9F8F6;
+  --text-alt: #f3f3f3;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-bg-alt: var(--bg-alt);
+  
+  --color-accent: var(--accent);
+  --color-main: var(--main);
+
   --font-sans: "Oswald", sans-serif;
   --font-pixel: "Press Start 2P", monospace;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {
@@ -30,4 +42,7 @@ body {
   font-weight: 400;
   font-style: normal;
   overflow-x: hidden;
+  transition:
+  background-color 300ms ease,
+  color 300ms ease;
 }

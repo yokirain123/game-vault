@@ -2,19 +2,23 @@
 
 import React, { useEffect, useState } from "react";
 import Header from "../components/ui/Header";
-import { createClient } from "../lib/supabaseClient";
+import { createClient } from "../data/supabaseClient";
 import { type Game, type GameRow, mapGameRowToGame } from "../data/gameTypes";
 import AddBacklogButton from "../components/pages/backlog/addBacklogButton";
 import AddBacklogModal from "../components/pages/backlog/addBacklogModal";
 import BacklogDetailsCard from "../components/pages/backlog/BacklogDetailsCard";
 import BacklogGrid from "../components/pages/backlog/BacklogGrid";
+import Footer from "../components/ui/Footer";
 
 function createSlug(title: string) {
-  return title
+  const baseSlug = title
     .toLowerCase()
     .trim()
-    .replace(/[^\w\s-]/g, "")
-    .replace(/\s+/g, "-");
+    .replace(/[^\p{L}\p{N}\s-]/gu, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-");
+
+  return `${baseSlug || "collection"}-${Date.now().toString(36)}`;
 }
 
 function BacklogPage() {
@@ -182,7 +186,9 @@ function BacklogPage() {
   }
 
   async function handleDeleteBacklogGame(gameId: string) {
-    const confirmed = confirm("Are you sure you want to delete this backlog game?");
+    const confirmed = confirm(
+      "Are you sure you want to delete this backlog game?",
+    );
 
     if (!confirmed) return;
 
@@ -210,15 +216,15 @@ function BacklogPage() {
     <div>
       <Header />
 
-      <section className="w-full px-16 mt-7 pt-20 text-white">
+      <section className="w-full px-16 mt-7 py-20 text-main">
         <div className="mb-4">
           <h1 className="text-5xl font-bold">Беклог</h1>
-          <p className="mt-3 text-zinc-400">
+          <p className="mt-3 text-main/50">
             Ігри, до яких я ще хочу добратись.
           </p>
         </div>
 
-        <div className="flex items-start gap-8">
+        <div className="flex items-start gap-8 pt-4">
           <BacklogGrid
             games={games}
             selectedGame={selectedGame}
@@ -249,6 +255,7 @@ function BacklogPage() {
           isEditing={Boolean(editingGameId)}
         />
       </section>
+      <Footer />
     </div>
   );
 }

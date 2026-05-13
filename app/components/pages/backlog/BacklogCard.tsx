@@ -17,20 +17,19 @@ function BacklogCard({ game, isSelected, onSelect }: BacklogCardProps) {
         ${isSelected ? "" : ""}
       `}
     >
-        <div className="flex flex-col ">
-            <div className="relative h-44 w-full overflow-hidden rounded-3xl">
-        <img
-          src={game.coverImage}
-          alt={game.title}
-          className="h-full w-full rounded-3xl object-cover transition-all duration-500 group-hover:scale-110 group-hover:brightness-120 group-hover:contrast-110"
-        />
-      </div>
-
-      <div className="px-5 text-center">
-          <h3 className="text-lg font-light leading-tight">{game.title}</h3>
-      </div>
+      <div className="flex flex-col ">
+        <div className="relative h-44 w-full overflow-hidden rounded-3xl">
+          <img
+            src={game.coverImage}
+            alt={game.title}
+            className="h-full w-full rounded-3xl object-cover transition-all duration-500 group-hover:scale-110 group-hover:brightness-120 group-hover:contrast-110"
+          />
         </div>
-      
+
+        <div className="px-5 text-center">
+          <h3 className="text-lg font-light leading-tight">{game.title}</h3>
+        </div>
+      </div>
     </button>
   );
 }

@@ -17,7 +17,7 @@ type AddCollectionModalProps = {
   handleSaveCollection: (event: React.FormEvent<HTMLFormElement>) => void;
   isSaving: boolean;
   isEditing: boolean;
-handleCloseCollectionModal: () => void;
+  handleCloseCollectionModal: () => void;
 };
 
 function AddCollectionModal({
@@ -43,18 +43,18 @@ function AddCollectionModal({
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 px-6 backdrop-blur-sm">
-      <div className="relative max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-3xl bg-zinc-900 p-8 text-white shadow-2xl">
+      <div className="relative max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-3xl bg-zinc-900 p-8 text-accent shadow-2xl">
         <button
-  type="button"
-  onClick={handleCloseCollectionModal}
-  className="absolute right-5 top-5 flex h-10 w-10 items-center justify-center rounded-full bg-zinc-800 text-xl transition hover:bg-zinc-700"
->
-  ×
-</button>
+          type="button"
+          onClick={handleCloseCollectionModal}
+          className="absolute right-5 top-5 flex h-10 w-10 items-center justify-center rounded-full bg-zinc-800 text-xl transition hover:bg-zinc-700"
+        >
+          ×
+        </button>
 
         <h3 className="mb-6 text-3xl font-bold">
-  {isEditing ? "Edit collection" : "Add collection"}
-</h3>
+          {isEditing ? "Edit collection" : "Add collection"}
+        </h3>
 
         <form onSubmit={handleSaveCollection} className="grid gap-4">
           <input
@@ -105,7 +105,7 @@ function AddCollectionModal({
                       ${
                         isSelected
                           ? "bg-[#59B292] text-zinc-950"
-                          : "bg-zinc-900 text-white hover:bg-zinc-700"
+                          : "bg-zinc-900 text-accent hover:bg-zinc-700"
                       }
                     `}
                   >
@@ -123,16 +123,16 @@ function AddCollectionModal({
           </div>
 
           <button
-  type="submit"
-  disabled={isSaving}
-  className="mt-2 rounded-xl bg-[#59B292] px-5 py-3 font-bold text-zinc-900 transition hover:bg-[#73d3b2] disabled:cursor-not-allowed disabled:opacity-60"
->
-  {isSaving
-    ? "Saving..."
-    : isEditing
-      ? "Save changes"
-      : "Save collection"}
-</button>
+            type="submit"
+            disabled={isSaving}
+            className="mt-2 rounded-xl bg-[#59B292] px-5 py-3 font-bold text-zinc-900 transition hover:bg-[#73d3b2] disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {isSaving
+              ? "Saving..."
+              : isEditing
+                ? "Save changes"
+                : "Save collection"}
+          </button>
         </form>
       </div>
     </div>

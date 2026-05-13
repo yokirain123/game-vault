@@ -45,19 +45,19 @@ function ReviewsFilters({
   return (
     <div className="flex flex-col gap-3">
       <div className="grid grid-cols-[1fr_auto_auto] gap-3">
-        <div className="flex items-center gap-4 rounded-full bg-zinc-900 px-6 py-4">
-          <IoSearch className="shrink-0 text-zinc-300" size={20} />
+        <div className="flex items-center gap-4 rounded-full bg-bg-alt/50 px-6 py-4">
+          <IoSearch className="shrink-0 text-main/75" size={20} />
 
           <input
             type="text"
             placeholder="Назва гри..."
             value={searchQuery}
             onChange={(event) => setSearchQuery(event.target.value)}
-            className="w-full bg-transparent text-white outline-none placeholder:text-zinc-500"
+            className="w-full bg-transparent text-main outline-none placeholder:text-zinc-500"
           />
         </div>
 
-        <div className="flex items-center gap-3 rounded-full bg-zinc-900 px-8 py-2">
+        <div className="flex items-center gap-3 rounded-full bg-bg-alt/50 px-8 py-2">
           {reactions.map((reaction) => (
             <button
               key={reaction}
@@ -69,8 +69,8 @@ function ReviewsFilters({
               }
               title={gameReactionLabels[reaction]}
               className={`
-      rounded-full px-3 py-1 text-lg transition
-      ${selectedReaction === reaction ? "bg-zinc-800" : "hover:bg-zinc-800"}
+      rounded-full px-3 py-1 text-lg transition-all duration-500
+      ${selectedReaction === reaction ? "bg-bg-alt/50" : "hover:bg-bg-alt/75"}
     `}
             >
               {gameReactionEmoji[reaction]}
@@ -82,8 +82,8 @@ function ReviewsFilters({
           type="button"
           onClick={() => setIsGenresOpen((prev) => !prev)}
           className={`
-            flex items-center justify-center gap-3 rounded-full px-8 py-4 font-bold transition
-            ${isGenresOpen ? "bg-zinc-950" : "bg-zinc-800 hover:bg-zinc-700"}
+            flex items-center justify-center gap-3 rounded-full text-main px-8 py-4 font-bold transition-all duration-500
+            ${isGenresOpen ? "bg-bg-alt/50 hover:bg-bg-alt/75" : "bg-bg-alt/50 hover:bg-bg-alt/75"}
           `}
         >
           Жанри
@@ -96,7 +96,7 @@ function ReviewsFilters({
       </div>
 
       {isGenresOpen && (
-        <div className="rounded-3xl bg-zinc-950 px-7 py-6">
+        <div className="rounded-3xl bg-bg-alt/50 px-7 py-6">
           <div className="grid grid-cols-4 gap-x-20 gap-y-4">
             {availableGenres.map((genre) => (
               <button
@@ -113,8 +113,8 @@ function ReviewsFilters({
       w-fit rounded-xl px-4 py-2 text-left transition
       ${
         selectedGenres.includes(genre)
-          ? "bg-zinc-800 text-white"
-          : "text-zinc-200 hover:bg-zinc-900 hover:text-white"
+          ? "bg-bg-alt/75 text-accent"
+          : "text-main hover:bg-bg-alt/75 hover:text-accent"
       }
     `}
               >
@@ -126,7 +126,7 @@ function ReviewsFilters({
           <button
             type="button"
             onClick={() => setSelectedGenres([])}
-            className="mt-8 w-full rounded-full bg-zinc-900 px-5 py-3 text-sm font-bold text-white transition hover:bg-[#59B292] hover:text-zinc-950"
+            className="mt-8 w-full rounded-full transition-all duration-500 bg-bg-alt/75 px-5 py-3 text-sm font-bold text-main hover:bg-bg-alt hover:text-accent"
           >
             Скинути фільтри жанрів
           </button>

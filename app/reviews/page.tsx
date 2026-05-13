@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { createClient } from "../lib/supabaseClient";
+import { createClient } from "../data/supabaseClient";
 import {
   type Game,
   type GameRow,
@@ -14,6 +14,7 @@ import AddReviewButton from "../components/pages/reviews/AddReviewButton";
 import AddReviewModal from "../components/pages/reviews/AddReviewModal";
 import GameGrid from "../components/pages/reviews/GameGrid";
 import ReviewsFilters from "../components/pages/reviews/ReviewsFilter";
+import Footer from "../components/ui/Footer";
 
 function createSlug(title: string) {
   return title
@@ -269,7 +270,7 @@ function Reviews() {
   return (
     <div>
       <Header />
-      <section className="w-full px-16 mt-7 pt-20 text-white">
+      <section className="w-full px-16 mt-7 py-20 text-accent">
         <div className="">
           <ReviewsFilters
             searchQuery={searchQuery}
@@ -311,6 +312,7 @@ function Reviews() {
           isSaving={isSaving}
         />
       </section>
+      <Footer />
     </div>
   );
 }

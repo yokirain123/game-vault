@@ -2,7 +2,12 @@
 
 import { useState } from "react";
 
-function TiltCard() {
+type TiltCardProps = {
+  image: string;
+  title?: string;
+};
+
+function TiltCard({ image, title }: TiltCardProps) {
   const [rotate, setRotate] = useState({ x: 0, y: 0 });
 
   function handleMouseMove(event: React.MouseEvent<HTMLDivElement>) {
@@ -26,23 +31,23 @@ function TiltCard() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center">
-      <div
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
-        style={{
-          transform: `perspective(900px) rotateX(${rotate.x}deg) rotateY(${rotate.y}deg)`,
-        }}
-        className="
-          h-160 w-150 rounded-3xl bg-[#59B292]
-          transition-transform duration-200 ease-out
-          will-change-transform
-        "
-      >
-        <div className="flex h-full items-center justify-center text-3xl font-bold text-zinc-950">
-          Tilt me
-        </div>
-      </div>
+    <div
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{
+        transform: `perspective(900px) rotateX(${rotate.x}deg) rotateY(${rotate.y}deg)`,
+      }}
+      className="
+        relative h-full w-full overflow-hidden rounded-5xl
+        transition-transform duration-200 ease-out
+        will-change-transform bg-bg-alt/25 rounded-3xl
+      "
+    >
+      <img
+        src={image}
+        alt={title || "Tilt card image"}
+        className="p-3 h-128 w-150 rounded-4xl object-cover"
+      />
     </div>
   );
 }

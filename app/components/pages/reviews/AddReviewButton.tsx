@@ -3,10 +3,7 @@ type AddReviewButtonProps = {
   setIsAddModalOpen: (value: boolean) => void;
 };
 
-function AddReviewButton({
-  isAdmin,
-  setIsAddModalOpen,
-}: AddReviewButtonProps) {
+function AddReviewButton({ isAdmin, setIsAddModalOpen }: AddReviewButtonProps) {
   if (!isAdmin) return null;
 
   return (

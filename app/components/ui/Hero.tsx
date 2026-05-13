@@ -7,32 +7,32 @@ const slides = [
   {
     text: "Game Vault",
     shape: "skew-x-[-4deg] rotate-[-1deg]",
-    wrapperColor: "bg-[#59B292]",
+    wrapperColor: "bg-linear-to-t from-[#1F6F5F] to-[#6FCF97]",
     textColor: "text-background",
     size: "text-8xl",
   },
   {
     text: "Рецензії",
-    
-    wrapperColor: "bg-[#FFC94D]",
+
+    wrapperColor: "bg-linear-to-tr from-[#FA812F] to-[#F3C623]",
     textColor: "text-background",
   },
   {
     text: "Добірки",
-    
-    wrapperColor: "bg-[#9B8EC7]",
+
+    wrapperColor: "bg-linear-to-r from-[#8A244B] to-[#F63049]",
     textColor: "text-background",
   },
   {
     text: "Беклог",
-    
-    wrapperColor: "bg-[#FA6781]",
+
+    wrapperColor: "bg-linear-to-b from-[#462C7D] to-[#FF70BF]",
     textColor: "text-background",
   },
   {
     text: "Рекомендації",
-    
-    wrapperColor: "bg-[#AACDDC]",
+
+    wrapperColor: "bg-linear-to-l from-[#162E93] to-[#2F2FE4]",
     textColor: "text-background",
   },
 ];
