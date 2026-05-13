@@ -1,36 +1,109 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Game Vault 🎮
 
-## Getting Started
+**Game Vault** — це персональний сайт для ігрових рецензій, беклогу та добірок ігор.
 
-First, run the development server:
+Ідея проєкту — зробити не просто список ігор, а власний ігровий журнал, де можна писати думки про пройдені ігри, зберігати ті, які хочеться пройти пізніше, створювати тематичні добірки та фільтрувати ігри за жанрами, реакціями й назвою.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Основний функціонал
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Рецензії на ігри
+- Окрема сторінка Backlog для ігор, які ще хочеться пройти
+- Добірки ігор за настроєм, жанром або темою
+- Детальна картка гри у боковій панелі
+- Пошук по назві гри
+- Фільтрація за жанрами
+- Фільтрація за реакціями
+- Можливість вибирати декілька жанрів
+- Посилання на Steam
+- Адмін-режим для додавання, редагування та видалення контенту
+- Перемикання світлої та темної теми
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## Система оцінювання
 
-To learn more about Next.js, take a look at the following resources:
+Замість звичайної оцінки цифрами використовується реакційна система:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- 🔥 Шедевр
+- 👍 Рекомендую
+- 🍺 Під пиво піде
+- 😐 Так собі
+- 👎 Жахливо
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## Сторінки
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Головна
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Стартова сторінка сайту з основними блоками та переходами до інших розділів.
+
+### Рецензії
+
+Основна сторінка з ігровими рецензіями. Тут можна шукати ігри, фільтрувати їх за жанрами та реакціями, а також відкривати детальну інформацію про гру.
+
+### Backlog
+
+Окрема сторінка для ігор, які ще не пройдені, але заплановані до проходження.
+
+### Добірки
+
+Тематичні списки ігор, наприклад:
+
+- Ігри під пиво
+- JRPG вайб
+- Душевні пригоди
+- Ігри для вечора
+- Шедеври, які треба пройти
+
+### Admin
+
+Прихована адмін-частина для керування контентом.
+
+---
+
+## Стек
+
+У проєкті використовується:
+
+- Next.js
+- React
+- TypeScript
+- Tailwind CSS
+- Tailwind CSS Motion
+- Supabase
+- Supabase Auth
+- PostgreSQL
+- React Icons
+- CSS variables для темізації
+- LocalStorage для збереження теми
+
+---
+
+## База даних
+
+Проєкт використовує Supabase як backend і базу даних.
+
+Основні таблиці:
+
+- `games` — ігри, рецензії, backlog, жанри, реакції, Steam-посилання
+- `collections` — добірки ігор
+- `collection_games` — зв’язок між добірками та іграми
+
+---
+
+## Адмін-функціонал
+
+Адміністратор може:
+
+- додавати рецензії
+- редагувати рецензії
+- видаляти рецензії
+- додавати ігри в backlog
+- редагувати backlog
+- видаляти backlog-картки
+- створювати добірки
+- редагувати добірки
+- видаляти добірки
