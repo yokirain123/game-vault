@@ -50,31 +50,31 @@ function Footer() {
         </div>
         <Divider />
         <div className="flex flex-row gap-10 p-4 justify-center">
-          <Link href="https://t.me/yokiqqq">
+          <Link href="https://t.me/yokiqqq" target="_blank" rel="noopener noreferrer">
             <FaTelegram
               size={30}
               className="hover:text-accent transition-all duration-500"
             />
           </Link>
-          <Link href="https://github.com/yokirain123">
+          <Link href="https://github.com/yokirain123" target="_blank" rel="noopener noreferrer">
             <FaGithub
               size={30}
               className="hover:text-accent transition-all duration-500"
             />
           </Link>
-          <Link href="https://discord.gg/RdqVwYdjXa">
+          <Link href="https://discord.gg/RdqVwYdjXa" target="_blank" rel="noopener noreferrer">
             <FaDiscord
               size={30}
               className="hover:text-accent transition-all duration-500"
             />
           </Link>
-          <Link href="https://www.youtube.com/@pixel_marshal">
+          <Link href="https://www.youtube.com/@pixel_marshal" target="_blank" rel="noopener noreferrer">
             <FaYoutube
               size={30}
               className="hover:text-accent transition-all duration-500"
             />
           </Link>
-          <Link href="https://open.spotify.com/user/u1nh9w1xtc32ma7xijptcfgaw?si=4222f43f64084eec">
+          <Link href="https://open.spotify.com/user/u1nh9w1xtc32ma7xijptcfgaw?si=4222f43f64084eec" target="_blank" rel="noopener noreferrer">
             <FaSpotify
               size={30}
               className="hover:text-accent transition-all duration-500"
