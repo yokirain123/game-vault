@@ -1,4 +1,6 @@
 import React from "react";
+import Image from "next/image";
+import DialogShell from "../../ui/DialogShell";
 import { type Game } from "../../../data/gameTypes";
 
 type CollectionFormData = {
@@ -10,7 +12,6 @@ type CollectionFormData = {
 
 type AddCollectionModalProps = {
   isCollectionModalOpen: boolean;
-  setIsCollectionModalOpen: (value: boolean) => void;
   formData: CollectionFormData;
   setFormData: React.Dispatch<React.SetStateAction<CollectionFormData>>;
   games: Game[];
@@ -19,6 +20,10 @@ type AddCollectionModalProps = {
   isEditing: boolean;
   handleCloseCollectionModal: () => void;
 };
+
+const fieldClass =
+  "min-h-12 w-full rounded-xl bg-zinc-800 px-4 py-3 text-base text-zinc-100 outline-none ring-1 ring-zinc-700 placeholder:text-zinc-500 focus:ring-2 focus:ring-[#59B292]";
+const labelClass = "grid gap-2 text-sm font-bold text-zinc-200";
 
 function AddCollectionModal({
   isCollectionModalOpen,
@@ -30,68 +35,73 @@ function AddCollectionModal({
   isSaving,
   isEditing,
 }: AddCollectionModalProps) {
-  if (!isCollectionModalOpen) return null;
-
   function toggleGame(gameId: string) {
-    setFormData((prev) => ({
-      ...prev,
-      gameIds: prev.gameIds.includes(gameId)
-        ? prev.gameIds.filter((id) => id !== gameId)
-        : [...prev.gameIds, gameId],
+    setFormData((current) => ({
+      ...current,
+      gameIds: current.gameIds.includes(gameId)
+        ? current.gameIds.filter((id) => id !== gameId)
+        : [...current.gameIds, gameId],
     }));
   }
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 px-6 backdrop-blur-sm">
-      <div className="relative max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-3xl bg-zinc-900 p-8 text-accent shadow-2xl">
-        <button
-          type="button"
-          onClick={handleCloseCollectionModal}
-          className="absolute right-5 top-5 flex h-10 w-10 items-center justify-center rounded-full bg-zinc-800 text-xl transition hover:bg-zinc-700"
-        >
-          ×
-        </button>
-
-        <h3 className="mb-6 text-3xl font-bold">
-          {isEditing ? "Edit collection" : "Add collection"}
-        </h3>
-
-        <form onSubmit={handleSaveCollection} className="grid gap-4">
+    <DialogShell
+      isOpen={isCollectionModalOpen}
+      onClose={handleCloseCollectionModal}
+      title={isEditing ? "Редагувати добірку" : "Додати добірку"}
+      description="Об’єднай ігри за темою, настроєм або жанром."
+      maxWidthClass="max-w-3xl"
+    >
+      <form
+        onSubmit={handleSaveCollection}
+        noValidate
+        aria-busy={isSaving}
+        className="grid gap-4"
+      >
+        <label className={labelClass}>
+          Назва добірки
           <input
+            name="title"
             type="text"
-            placeholder="Collection title"
+            placeholder="Наприклад, Ігри для затишного вечора"
             value={formData.title}
-            onChange={(event) =>
-              setFormData({ ...formData, title: event.target.value })
-            }
-            className="rounded-xl bg-zinc-800 px-4 py-3 outline-none ring-1 ring-zinc-700 focus:ring-[#59B292]"
+            onChange={(event) => setFormData({ ...formData, title: event.target.value })}
+            className={fieldClass}
             required
           />
+        </label>
 
+        <label className={labelClass}>
+          Опис
           <textarea
-            placeholder="Collection description"
+            name="description"
+            placeholder="Коротко поясни ідею добірки"
             rows={4}
             value={formData.description}
             onChange={(event) =>
               setFormData({ ...formData, description: event.target.value })
             }
-            className="resize-none rounded-xl bg-zinc-800 px-4 py-3 outline-none ring-1 ring-zinc-700 focus:ring-[#59B292]"
+            className={`${fieldClass} resize-none`}
           />
+        </label>
 
+        <label className={labelClass}>
+          URL обкладинки
           <textarea
-            placeholder="Cover image URL"
-            rows={3}
+            name="coverImage"
+            placeholder="https://..."
+            rows={2}
             value={formData.coverImage}
-            onChange={(event) =>
-              setFormData({ ...formData, coverImage: event.target.value })
-            }
-            className="resize-none rounded-xl bg-zinc-800 px-4 py-3 outline-none ring-1 ring-zinc-700 focus:ring-[#59B292]"
+            onChange={(event) => setFormData({ ...formData, coverImage: event.target.value })}
+            className={`${fieldClass} resize-none`}
           />
+        </label>
 
-          <div className="rounded-2xl bg-zinc-800 p-4">
-            <h4 className="mb-4 text-lg font-bold">Games in collection</h4>
+        <fieldset className="rounded-2xl bg-zinc-800 p-3 ring-1 ring-zinc-700 sm:p-4">
+          <legend className="px-1 text-lg font-bold text-zinc-100">Ігри в добірці</legend>
 
-            <div className="grid max-h-80 grid-cols-1 gap-3 overflow-y-auto pr-2 sm:grid-cols-2">
+          {games.length > 0 ? (
+            <div className="mt-3 grid max-h-80 grid-cols-1 gap-3 overflow-y-auto overscroll-contain pr-1 sm:grid-cols-2 sm:pr-2">
               {games.map((game) => {
                 const isSelected = formData.gameIds.includes(game.id);
 
@@ -100,42 +110,48 @@ function AddCollectionModal({
                     key={game.id}
                     type="button"
                     onClick={() => toggleGame(game.id)}
-                    className={`
-                      flex items-center gap-3 rounded-2xl p-3 text-left transition
-                      ${
-                        isSelected
-                          ? "bg-[#59B292] text-zinc-950"
-                          : "bg-zinc-900 text-accent hover:bg-zinc-700"
-                      }
-                    `}
+                    aria-pressed={isSelected}
+                    className={`flex min-h-20 min-w-0 items-center gap-3 rounded-2xl p-3 text-left transition-colors ${
+                      isSelected
+                        ? "bg-[#59B292] text-zinc-950"
+                        : "bg-zinc-900 text-zinc-100 hover:bg-zinc-700"
+                    }`}
                   >
-                    <img
+                    <Image
                       src={game.coverImage}
-                      alt={game.title}
-                      className="h-14 w-20 rounded-xl object-cover"
+                      alt=""
+                      width={80}
+                      height={56}
+                      unoptimized
+                      className="h-14 w-16 shrink-0 rounded-xl object-cover sm:w-20"
                     />
-
-                    <span className="text-sm font-bold">{game.title}</span>
+                    <span className="min-w-0 break-words text-sm font-bold">
+                      {game.title}
+                    </span>
                   </button>
                 );
               })}
             </div>
-          </div>
+          ) : (
+            <p className="mt-3 rounded-xl bg-zinc-900 p-4 text-sm text-zinc-400">
+              Спочатку додай хоча б одну гру або рецензію.
+            </p>
+          )}
+        </fieldset>
 
-          <button
-            type="submit"
-            disabled={isSaving}
-            className="mt-2 rounded-xl bg-[#59B292] px-5 py-3 font-bold text-zinc-900 transition hover:bg-[#73d3b2] disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {isSaving
-              ? "Saving..."
-              : isEditing
-                ? "Save changes"
-                : "Save collection"}
-          </button>
-        </form>
-      </div>
-    </div>
+        <button
+          type="submit"
+          disabled={isSaving}
+          className="mt-2 min-h-12 rounded-xl bg-[#59B292] px-5 py-3 font-bold text-zinc-950 transition-colors hover:bg-[#73d3b2] disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {isSaving
+            ? "Зберігаю..."
+            : isEditing
+              ? "Зберегти зміни"
+              : "Зберегти добірку"}
+        </button>
+      </form>
+    </DialogShell>
   );
 }
 

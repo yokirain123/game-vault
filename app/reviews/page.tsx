@@ -15,6 +15,10 @@ import AddReviewModal from "../components/pages/reviews/AddReviewModal";
 import GameGrid from "../components/pages/reviews/GameGrid";
 import ReviewsFilters from "../components/pages/reviews/ReviewsFilter";
 import Footer from "../components/ui/Footer";
+import ConfirmDialog from "../components/ui/ConfirmDialog";
+import FeedbackMessage from "../components/ui/FeedbackMessage";
+import PageLoading from "../components/ui/PageLoading";
+import { focusFormControl, isValidHttpUrl } from "../data/formValidation";
 
 function createSlug(title: string) {
   return title
@@ -35,6 +39,9 @@ function Reviews() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [editingGameId, setEditingGameId] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<Game | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -56,6 +63,28 @@ function Reviews() {
     GameReaction | "all"
   >("all");
 
+  function resetReviewForm() {
+    setFormData({
+      title: "",
+      coverImage: "",
+      bannerImage: "",
+      genres: "",
+      platforms: "",
+      status: "backlog",
+      reaction: "average",
+      hoursPlayed: "",
+      isFavorite: false,
+      personalReview: "",
+      steamUrl: "",
+    });
+  }
+
+  function handleCloseReviewModal() {
+    setIsAddModalOpen(false);
+    setEditingGameId(null);
+    resetReviewForm();
+  }
+
   useEffect(() => {
     async function fetchGames() {
       setIsLoading(true);
@@ -68,6 +97,7 @@ function Reviews() {
 
       if (error) {
         console.error("Error fetching games:", error.message);
+        setErrorMessage(error.message);
         setIsLoading(false);
         return;
       }
@@ -92,6 +122,36 @@ function Reviews() {
 
   async function handleAddReview(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+
+    setErrorMessage(null);
+
+    const requiredFields = [
+      { name: "title", value: formData.title, label: "Назва гри" },
+      { name: "coverImage", value: formData.coverImage, label: "URL обкладинки" },
+      { name: "bannerImage", value: formData.bannerImage, label: "URL банера" },
+      { name: "genres", value: formData.genres, label: "Жанри" },
+      { name: "platforms", value: formData.platforms, label: "Платформи" },
+    ];
+    const firstMissingField = requiredFields.find(({ value }) => !value.trim());
+
+    if (firstMissingField) {
+      setErrorMessage(`Заповни поле «${firstMissingField.label}».`);
+      focusFormControl(event.currentTarget, firstMissingField.name);
+      return;
+    }
+
+    const urlFields = [
+      { name: "coverImage", value: formData.coverImage, label: "URL обкладинки" },
+      { name: "bannerImage", value: formData.bannerImage, label: "URL банера" },
+      { name: "steamUrl", value: formData.steamUrl, label: "Посилання на Steam" },
+    ];
+    const firstInvalidUrl = urlFields.find(({ value }) => !isValidHttpUrl(value));
+
+    if (firstInvalidUrl) {
+      setErrorMessage(`Поле «${firstInvalidUrl.label}» має містити коректне http(s)-посилання.`);
+      focusFormControl(event.currentTarget, firstInvalidUrl.name);
+      return;
+    }
 
     setIsSaving(true);
 
@@ -130,7 +190,7 @@ function Reviews() {
 
       if (error) {
         console.error("Error updating review:", error.message);
-        alert(error.message);
+        setErrorMessage(error.message);
         return;
       }
 
@@ -143,22 +203,7 @@ function Reviews() {
       );
 
       setSelectedGame(mappedGame);
-      setEditingGameId(null);
-      setIsAddModalOpen(false);
-
-      setFormData({
-        title: "",
-        coverImage: "",
-        bannerImage: "",
-        genres: "",
-        platforms: "",
-        status: "backlog",
-        reaction: "average" as Game["reaction"],
-        hoursPlayed: "",
-        isFavorite: false,
-        personalReview: "",
-        steamUrl: "",
-      });
+      handleCloseReviewModal();
 
       return;
     }
@@ -173,28 +218,14 @@ function Reviews() {
 
     if (error) {
       console.error("Error adding review:", error.message);
-      alert(error.message);
+      setErrorMessage(error.message);
       return;
     }
 
     const mappedGame = mapGameRowToGame(data as GameRow);
 
     setGames((prevGames) => [mappedGame, ...prevGames]);
-    setIsAddModalOpen(false);
-
-    setFormData({
-      title: "",
-      coverImage: "",
-      bannerImage: "",
-      genres: "",
-      platforms: "",
-      status: "backlog",
-      reaction: "average" as Game["reaction"],
-      hoursPlayed: "",
-      isFavorite: false,
-      personalReview: "",
-      steamUrl: "",
-    });
+    handleCloseReviewModal();
   }
 
   function handleEditReview(game: Game) {
@@ -217,20 +248,33 @@ function Reviews() {
     setIsAddModalOpen(true);
   }
 
-  async function handleDeleteReview(gameId: string) {
-    const confirmed = confirm("Are you sure you want to delete this review?");
+  function handleDeleteReview(gameId: string) {
+    setDeleteTarget(games.find((game) => game.id === gameId) ?? null);
+  }
 
-    if (!confirmed) return;
+  async function confirmDeleteReview() {
+    if (!deleteTarget) return;
 
-    const { error } = await supabase.from("games").delete().eq("id", gameId);
+    setErrorMessage(null);
+    setIsDeleting(true);
+
+    const { error } = await supabase
+      .from("games")
+      .delete()
+      .eq("id", deleteTarget.id);
+
+    setIsDeleting(false);
 
     if (error) {
       console.error("Error deleting review:", error.message);
-      alert(error.message);
+      setErrorMessage(error.message);
       return;
     }
 
-    setGames((prevGames) => prevGames.filter((game) => game.id !== gameId));
+    setGames((prevGames) =>
+      prevGames.filter((game) => game.id !== deleteTarget.id),
+    );
+    setDeleteTarget(null);
     setSelectedGame(null);
   }
 
@@ -260,18 +304,21 @@ function Reviews() {
   }
 
   if (isLoading) {
-    return (
-      <section>
-        <Header />
-      </section>
-    );
+    return <PageLoading label="Завантажую рецензії..." />;
   }
 
   return (
-    <div>
+    <div className="flex min-h-dvh flex-col">
       <Header />
-      <section className="w-full px-16 mt-7 py-20 text-accent">
-        <div className="">
+      <main className="page-container flex-1 pb-16 pt-24 text-main sm:pt-28 lg:pt-32">
+        <header className="mb-6 sm:mb-8">
+          <h1 className="text-3xl font-bold text-main sm:text-5xl">Ігрові рецензії</h1>
+          <p className="mt-3 max-w-2xl text-main/60">
+            Враження від пройдених ігор — від шедеврів до тих, які краще пропустити.
+          </p>
+        </header>
+
+        <div>
           <ReviewsFilters
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
@@ -288,7 +335,11 @@ function Reviews() {
           />
         </div>
 
-        <div className="flex items-start gap-8 pt-4">
+        <div
+          className={`flex min-w-0 items-start pt-6 lg:pt-8 ${
+            selectedGame ? "lg:gap-8" : "lg:gap-0"
+          }`}
+        >
           <GameGrid
             games={filteredGames}
             selectedGame={selectedGame}
@@ -305,13 +356,28 @@ function Reviews() {
         </div>
         <AddReviewModal
           isAddModalOpen={isAddModalOpen}
-          setIsAddModalOpen={setIsAddModalOpen}
+          onClose={handleCloseReviewModal}
           formData={formData}
           setFormData={setFormData}
           handleAddReview={handleAddReview}
           isSaving={isSaving}
+          isEditing={Boolean(editingGameId)}
         />
-      </section>
+
+        <ConfirmDialog
+          isOpen={Boolean(deleteTarget)}
+          title="Видалити рецензію?"
+          message={`Рецензію «${deleteTarget?.title ?? ""}» буде видалено без можливості відновлення.`}
+          isPending={isDeleting}
+          onClose={() => setDeleteTarget(null)}
+          onConfirm={confirmDeleteReview}
+        />
+      </main>
+
+      <FeedbackMessage
+        message={errorMessage}
+        onDismiss={() => setErrorMessage(null)}
+      />
       <Footer />
     </div>
   );

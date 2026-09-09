@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { FaChevronDown } from "react-icons/fa";
 
 const slides = [
@@ -9,31 +9,35 @@ const slides = [
     shape: "skew-x-[-4deg] rotate-[-1deg]",
     wrapperColor: "bg-linear-to-t from-[#1F6F5F] to-[#6FCF97]",
     textColor: "text-background",
-    size: "text-8xl",
+    size: "text-[clamp(2rem,10vw,6rem)]",
   },
   {
     text: "Рецензії",
-
+    shape: "rotate-[1deg]",
     wrapperColor: "bg-linear-to-tr from-[#FA812F] to-[#F3C623]",
     textColor: "text-background",
+    size: "text-[clamp(1.65rem,7vw,3.75rem)]",
   },
   {
     text: "Добірки",
-
+    shape: "rotate-[-1deg]",
     wrapperColor: "bg-linear-to-r from-[#8A244B] to-[#F63049]",
     textColor: "text-background",
+    size: "text-[clamp(1.65rem,7vw,3.75rem)]",
   },
   {
     text: "Беклог",
-
+    shape: "rotate-[1deg]",
     wrapperColor: "bg-linear-to-b from-[#462C7D] to-[#FF70BF]",
     textColor: "text-background",
+    size: "text-[clamp(1.65rem,7vw,3.75rem)]",
   },
   {
     text: "Рекомендації",
-
+    shape: "rotate-[-1deg]",
     wrapperColor: "bg-linear-to-l from-[#162E93] to-[#2F2FE4]",
     textColor: "text-background",
+    size: "text-[clamp(1.35rem,6vw,3.5rem)]",
   },
 ];
 
@@ -41,47 +45,50 @@ function Hero() {
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setIndex((prevIndex) => (prevIndex + 1) % slides.length);
-    }, 1000);
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    return () => clearInterval(interval);
+    const interval = window.setInterval(() => {
+      setIndex((previousIndex) => (previousIndex + 1) % slides.length);
+    }, 1600);
+
+    return () => window.clearInterval(interval);
   }, []);
 
   const currentSlide = slides[index];
 
   return (
-    <div>
-      <div className="font-pixel bg-center bg-no-repeat w-full h-210 px-16 py-16 flex items-center justify-center">
-        <h1 className="text-7xl font-bold text-center leading-tight cursor-default select-none">
+    <section
+      aria-labelledby="hero-title"
+      className="flex min-h-[clamp(32rem,82svh,52rem)] flex-col justify-center overflow-hidden px-4 pb-8 pt-24 sm:px-6 sm:pt-28 lg:pt-32"
+    >
+      <div className="flex flex-1 items-center justify-center font-pixel">
+        <h1
+          id="hero-title"
+          className="max-w-full cursor-default select-none text-center font-bold leading-tight"
+        >
           <span
             key={currentSlide.text}
-            className={`
-              inline-block px-10 py-4 uppercase
-              motion-preset-pop motion-duration-300
-              ${currentSlide.shape}
-              ${currentSlide.wrapperColor}
-              ${currentSlide.textColor}
-              ${currentSlide.size || "text-5xl"}
-            `}
+            className={`inline-block max-w-[calc(100vw-2rem)] break-words px-4 py-4 uppercase motion-preset-pop motion-duration-300 sm:px-8 sm:py-5 lg:px-10 ${currentSlide.shape} ${currentSlide.wrapperColor} ${currentSlide.textColor} ${currentSlide.size}`}
           >
             {currentSlide.text}
           </span>
         </h1>
       </div>
 
-      <div className="flex flex-row justify-center items-center text-center gap-4 text-lg text-muted-foreground mb-20">
+      <div className="mt-8 flex items-center justify-center gap-3 text-center text-sm text-main/60 sm:text-lg">
         <FaChevronDown
-          size={15}
-          className="motion-preset-oscillate motion-duration-700"
+          aria-hidden="true"
+          size={14}
+          className="shrink-0 motion-preset-oscillate motion-duration-700"
         />
-        Скроль вниз, щоб побачити більше
+        <span>Скроль вниз, щоб побачити більше</span>
         <FaChevronDown
-          size={15}
-          className="motion-preset-oscillate motion-duration-700"
+          aria-hidden="true"
+          size={14}
+          className="shrink-0 motion-preset-oscillate motion-duration-700"
         />
       </div>
-    </div>
+    </section>
   );
 }
 

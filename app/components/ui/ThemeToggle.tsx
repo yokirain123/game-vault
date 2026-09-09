@@ -52,14 +52,21 @@ function ThemeToggle() {
     <button
       type="button"
       onClick={toggleTheme}
-      title="Change theme"
+      aria-label={
+        theme === "dark" ? "Увімкнути світлу тему" : "Увімкнути темну тему"
+      }
+      title={theme === "dark" ? "Світла тема" : "Темна тема"}
       className="
         flex h-11 w-11 items-center justify-center rounded-full
         text-main
-        hover:scale-110 hover:text-accent
+        transition hover:bg-bg-alt/50 hover:text-accent active:scale-95
       "
     >
-      {theme === "dark" ? <FaSun size={18} /> : <FaMoon size={18} />}
+      {theme === "dark" ? (
+        <FaSun aria-hidden="true" size={18} />
+      ) : (
+        <FaMoon aria-hidden="true" size={18} />
+      )}
     </button>
   );
 }

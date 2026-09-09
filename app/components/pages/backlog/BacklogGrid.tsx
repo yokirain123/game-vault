@@ -8,15 +8,23 @@ type BacklogGridProps = {
 };
 
 function BacklogGrid({ games, selectedGame, onSelectGame }: BacklogGridProps) {
+  if (games.length === 0) {
+    return (
+      <div className="flex min-h-48 flex-1 items-center justify-center rounded-3xl bg-bg-alt/40 p-6 text-center text-main/60">
+        Тут поки немає ігор.
+      </div>
+    );
+  }
+
   return (
     <div
       className={`
-        grid flex-1 items-start grid-cols-1 gap-6 transition-all duration-500
-        sm:grid-cols-2
+        grid min-w-0 flex-1 grid-cols-2 items-start gap-x-3 gap-y-6
+        sm:grid-cols-3 sm:gap-x-5 md:grid-cols-4
         ${
           selectedGame
             ? "lg:grid-cols-2 xl:grid-cols-3"
-            : "lg:grid-cols-5 xl:grid-cols-6"
+            : "lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6"
         }
       `}
     >

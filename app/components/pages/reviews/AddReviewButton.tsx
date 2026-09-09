@@ -11,12 +11,13 @@ function AddReviewButton({ isAdmin, setIsAddModalOpen }: AddReviewButtonProps) {
       type="button"
       onClick={() => setIsAddModalOpen(true)}
       title="Add review"
+      aria-label="Додати рецензію"
       className="
-        fixed bottom-6 right-6 z-50
-        flex h-10 w-10 items-center justify-center
+        fixed bottom-[max(1rem,env(safe-area-inset-bottom))] right-4 z-50
+        flex h-14 w-14 items-center justify-center sm:right-6
         rounded-full bg-[#59B292] text-3xl font-bold text-zinc-950
-        transition-all duration-300
-        hover:bg-[#73d3b2]
+        shadow-lg shadow-black/30 transition-[transform,background-color] duration-300
+        hover:scale-105 hover:bg-[#73d3b2]
       "
     >
       +

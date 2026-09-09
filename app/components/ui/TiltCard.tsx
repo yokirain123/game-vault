@@ -1,9 +1,10 @@
 "use client";
 
+import Image, { type StaticImageData } from "next/image";
 import { useState } from "react";
 
 type TiltCardProps = {
-  image: string;
+  image: StaticImageData;
   title?: string;
 };
 
@@ -11,19 +12,18 @@ function TiltCard({ image, title }: TiltCardProps) {
   const [rotate, setRotate] = useState({ x: 0, y: 0 });
 
   function handleMouseMove(event: React.MouseEvent<HTMLDivElement>) {
-    const card = event.currentTarget;
-    const rect = card.getBoundingClientRect();
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
+    const rect = event.currentTarget.getBoundingClientRect();
     const mouseX = event.clientX - rect.left;
     const mouseY = event.clientY - rect.top;
-
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
 
-    const rotateX = ((mouseY - centerY) / centerY) * -12;
-    const rotateY = ((mouseX - centerX) / centerX) * 12;
-
-    setRotate({ x: rotateX, y: rotateY });
+    setRotate({
+      x: ((mouseY - centerY) / centerY) * -8,
+      y: ((mouseX - centerX) / centerX) * 8,
+    });
   }
 
   function handleMouseLeave() {
@@ -37,16 +37,14 @@ function TiltCard({ image, title }: TiltCardProps) {
       style={{
         transform: `perspective(900px) rotateX(${rotate.x}deg) rotateY(${rotate.y}deg)`,
       }}
-      className="
-        relative h-full w-full overflow-hidden rounded-5xl
-        transition-transform duration-200 ease-out
-        will-change-transform bg-bg-alt/25 rounded-3xl
-      "
+      className="relative aspect-[6/5] w-full overflow-hidden rounded-3xl bg-bg-alt/25 transition-transform duration-200 ease-out lg:max-w-xl lg:will-change-transform"
     >
-      <img
+      <Image
         src={image}
-        alt={title || "Tilt card image"}
-        className="p-3 h-128 w-150 rounded-4xl object-cover"
+        alt={title || "Ілюстрація Game Vault"}
+        fill
+        sizes="(max-width: 1023px) calc(100vw - 2rem), 38vw"
+        className="object-cover p-2 sm:p-3"
       />
     </div>
   );
