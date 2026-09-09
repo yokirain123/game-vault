@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import Header from "../components/ui/Header";
 import { createClient } from "../data/supabaseClient";
 import {
@@ -13,6 +14,10 @@ import { type Game, type GameRow, mapGameRowToGame } from "../data/gameTypes";
 import AddCollectionButton from "../components/pages/collections/addCollectionButton";
 import AddCollectionModal from "../components/pages/collections/addCollectionModal";
 import Footer from "../components/ui/Footer";
+import ConfirmDialog from "../components/ui/ConfirmDialog";
+import FeedbackMessage from "../components/ui/FeedbackMessage";
+import PageLoading from "../components/ui/PageLoading";
+import { focusFormControl, isValidHttpUrl } from "../data/formValidation";
 
 function createSlug(title: string) {
   const baseSlug = title
@@ -39,6 +44,9 @@ function CollectionsPage() {
   const [editingCollectionId, setEditingCollectionId] = useState<string | null>(
     null,
   );
+  const [deleteTarget, setDeleteTarget] = useState<Collection | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -73,6 +81,7 @@ function CollectionsPage() {
 
       if (error) {
         console.error("Error fetching collections:", error.message);
+        setErrorMessage(error.message);
         setIsLoading(false);
         return;
       }
@@ -92,6 +101,7 @@ function CollectionsPage() {
 
       if (error) {
         console.error("Error fetching games:", error.message);
+        setErrorMessage(error.message);
         return;
       }
 
@@ -121,7 +131,7 @@ function CollectionsPage() {
 
     if (error) {
       console.error("Error fetching collection games:", error.message);
-      alert(error.message);
+      setErrorMessage(error.message);
       return;
     }
 
@@ -135,31 +145,53 @@ function CollectionsPage() {
     setIsCollectionModalOpen(true);
   }
 
-  async function handleDeleteCollection(collectionId: string) {
-    const confirmed = confirm(
-      "Are you sure you want to delete this collection?",
+  function handleDeleteCollection(collectionId: string) {
+    setDeleteTarget(
+      collections.find((collection) => collection.id === collectionId) ?? null,
     );
+  }
 
-    if (!confirmed) return;
+  async function confirmDeleteCollection() {
+    if (!deleteTarget) return;
+
+    setErrorMessage(null);
+    setIsDeleting(true);
 
     const { error } = await supabase
       .from("collections")
       .delete()
-      .eq("id", collectionId);
+      .eq("id", deleteTarget.id);
+
+    setIsDeleting(false);
 
     if (error) {
       console.error("Error deleting collection:", error.message);
-      alert(error.message);
+      setErrorMessage(error.message);
       return;
     }
 
     setCollections((prevCollections) =>
-      prevCollections.filter((collection) => collection.id !== collectionId),
+      prevCollections.filter((collection) => collection.id !== deleteTarget.id),
     );
+    setDeleteTarget(null);
   }
 
   async function handleSaveCollection(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+
+    setErrorMessage(null);
+
+    if (!formData.title.trim()) {
+      setErrorMessage("Заповни поле «Назва добірки».");
+      focusFormControl(event.currentTarget, "title");
+      return;
+    }
+
+    if (!isValidHttpUrl(formData.coverImage)) {
+      setErrorMessage("Поле «URL обкладинки» має містити коректне http(s)-посилання.");
+      focusFormControl(event.currentTarget, "coverImage");
+      return;
+    }
 
     setIsSaving(true);
 
@@ -185,7 +217,7 @@ function CollectionsPage() {
       if (updateError) {
         setIsSaving(false);
         console.error("Error updating collection:", updateError.message);
-        alert(updateError.message);
+        setErrorMessage(updateError.message);
         return;
       }
 
@@ -200,7 +232,7 @@ function CollectionsPage() {
           "Error deleting old collection games:",
           deleteOldGamesError.message,
         );
-        alert(deleteOldGamesError.message);
+        setErrorMessage(deleteOldGamesError.message);
         return;
       }
 
@@ -220,7 +252,7 @@ function CollectionsPage() {
             "Error updating collection games:",
             insertGamesError.message,
           );
-          alert(insertGamesError.message);
+          setErrorMessage(insertGamesError.message);
           return;
         }
       }
@@ -238,9 +270,8 @@ function CollectionsPage() {
       );
 
       setEditingCollectionId(null);
-      setIsCollectionModalOpen(false);
       setIsSaving(false);
-      resetForm();
+      handleCloseCollectionModal();
 
       return;
     }
@@ -254,7 +285,7 @@ function CollectionsPage() {
     if (collectionError) {
       setIsSaving(false);
       console.error("Error creating collection:", collectionError.message);
-      alert(collectionError.message);
+      setErrorMessage(collectionError.message);
       return;
     }
 
@@ -278,7 +309,7 @@ function CollectionsPage() {
           "Error adding games to collection:",
           collectionGamesError.message,
         );
-        alert(collectionGamesError.message);
+        setErrorMessage(collectionGamesError.message);
         return;
       }
     }
@@ -289,44 +320,49 @@ function CollectionsPage() {
     ]);
 
     setIsSaving(false);
-    setIsCollectionModalOpen(false);
-    resetForm();
+    handleCloseCollectionModal();
   }
 
   if (isLoading) {
-    return <Header />;
+    return <PageLoading label="Завантажую добірки..." />;
   }
 
   return (
-    <div>
+    <div className="flex min-h-dvh flex-col">
       <Header />
 
-      <main className="mt-7 px-16 py-20 text-main">
-        <div className="mb-10">
-          <h1 className="text-5xl font-bold">Добірки</h1>
-          <p className="mt-3 text-main/50">
+      <main className="page-container flex-1 pb-16 pt-24 text-main sm:pt-28 lg:pt-32">
+        <header className="mb-8 sm:mb-10">
+          <h1 className="text-3xl font-bold sm:text-5xl">Добірки</h1>
+          <p className="mt-3 max-w-2xl text-main/60">
             Ігри не просто списком, а під конкретний настрій.
           </p>
-        </div>
+        </header>
 
         {collections.length === 0 ? (
-          <div className="rounded-3xl bg-bg-alt p-10 text-center text-main/50">
+          <div className="rounded-3xl bg-bg-alt/50 p-8 text-center text-main/60 sm:p-10">
             Добірок поки немає.
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 xl:grid-cols-3">
             {collections.map((collection) => (
               <div
                 key={collection.id}
-                className="group overflow-hidden rounded-3xl bg-bg-alt/50 transition-all duration-300"
+                className="group min-w-0 overflow-hidden rounded-3xl bg-bg-alt/50 transition-colors duration-300"
               >
-                <Link href={`/collections/${collection.slug}`}>
-                  <div className="h-56 overflow-hidden transition-all duration-500 hover:brightness-120 hover:contrast-110">
+                <Link
+                  href={`/collections/${collection.slug}`}
+                  className="block rounded-t-3xl"
+                >
+                  <div className="relative aspect-[16/10] overflow-hidden transition-[filter] duration-500 hover:brightness-110 hover:contrast-110">
                     {collection.coverImage ? (
-                      <img
+                      <Image
                         src={collection.coverImage}
                         alt={collection.title}
-                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                        fill
+                        unoptimized
+                        sizes="(max-width: 639px) calc(100vw - 2rem), (max-width: 1279px) 45vw, 31vw"
+                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                     ) : (
                       <div className="flex h-full w-full items-center justify-center text-main">
@@ -335,8 +371,10 @@ function CollectionsPage() {
                     )}
                   </div>
 
-                  <div className="p-6">
-                    <h2 className="text-2xl font-bold">{collection.title}</h2>
+                  <div className="p-5 sm:p-6">
+                    <h2 className="break-words text-xl font-bold sm:text-2xl">
+                      {collection.title}
+                    </h2>
 
                     <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-main">
                       {collection.description || "No description yet."}
@@ -345,21 +383,21 @@ function CollectionsPage() {
                 </Link>
 
                 {isAdmin && (
-                  <div className="grid grid-cols-2 gap-3 px-6 pb-6">
+                  <div className="grid grid-cols-2 gap-3 px-5 pb-5 sm:px-6 sm:pb-6">
                     <button
                       type="button"
                       onClick={() => handleEditCollection(collection)}
-                      className="rounded-2xl bg-[#59B292] px-4 py-3 font-bold text-main transition hover:bg-[#73d3b2]"
+                      className="min-h-11 rounded-2xl bg-[#59B292] px-4 py-3 font-bold text-zinc-950 transition-colors hover:bg-[#73d3b2]"
                     >
-                      Edit
+                      Редагувати
                     </button>
 
                     <button
                       type="button"
                       onClick={() => handleDeleteCollection(collection.id)}
-                      className="rounded-2xl bg-red-500 px-4 py-3 font-bold text-main transition hover:bg-red-600"
+                      className="min-h-11 rounded-2xl bg-red-500 px-4 py-3 font-bold text-white transition-colors hover:bg-red-600"
                     >
-                      Delete
+                      Видалити
                     </button>
                   </div>
                 )}
@@ -375,7 +413,6 @@ function CollectionsPage() {
 
         <AddCollectionModal
           isCollectionModalOpen={isCollectionModalOpen}
-          setIsCollectionModalOpen={setIsCollectionModalOpen}
           handleCloseCollectionModal={handleCloseCollectionModal}
           formData={formData}
           setFormData={setFormData}
@@ -384,8 +421,21 @@ function CollectionsPage() {
           isSaving={isSaving}
           isEditing={Boolean(editingCollectionId)}
         />
+
+        <ConfirmDialog
+          isOpen={Boolean(deleteTarget)}
+          title="Видалити добірку?"
+          message={`Добірку «${deleteTarget?.title ?? ""}» буде видалено без можливості відновлення.`}
+          isPending={isDeleting}
+          onClose={() => setDeleteTarget(null)}
+          onConfirm={confirmDeleteCollection}
+        />
       </main>
 
+      <FeedbackMessage
+        message={errorMessage}
+        onDismiss={() => setErrorMessage(null)}
+      />
       <Footer />
     </div>
   );

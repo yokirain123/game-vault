@@ -11,7 +11,10 @@
   --foreground: #171717;
   --accent: #ff3d7e;
   --main: #171717;
+  --page-gutter: 1rem;
+  --page-max: 96rem;
   scroll-behavior: auto;
+  color-scheme: light;
 }
 
 .dark {
@@ -21,6 +24,7 @@
   --accent: #59B292;
   --main: #F9F8F6;
   --text-alt: #f3f3f3;
+  color-scheme: dark;
 }
 
 @theme inline {
@@ -35,14 +39,66 @@
   --font-pixel: "Press Start 2P", monospace;
 }
 
+html {
+  min-width: 320px;
+  background: var(--background);
+}
+
 body {
+  min-width: 320px;
   background: var(--background);
   color: var(--foreground);
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
-  overflow-x: hidden;
   transition:
-  background-color 300ms ease,
-  color 300ms ease;
+    background-color 300ms ease,
+    color 300ms ease;
+}
+
+@media (min-width: 640px) {
+  :root {
+    --page-gutter: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --page-gutter: 2.5rem;
+  }
+}
+
+::selection {
+  background: color-mix(in srgb, var(--accent) 35%, transparent);
+}
+
+* {
+  scrollbar-color: color-mix(in srgb, var(--accent) 65%, var(--bg-alt))
+    color-mix(in srgb, var(--bg-alt) 45%, transparent);
+  scrollbar-width: thin;
+}
+
+:where(a, button, input, textarea, select):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+:where(button, a) {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.page-container {
+  width: min(calc(100% - (var(--page-gutter) * 2)), var(--page-max));
+  margin-inline: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

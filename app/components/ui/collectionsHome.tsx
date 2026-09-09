@@ -1,30 +1,34 @@
 import Link from "next/link";
-import TiltCard from "./TiltCard";
-import reviewsImage from "../images/reviews.png";
 import { FaArrowRight } from "react-icons/fa6";
+import reviewsImage from "../images/collections.png";
+import TiltCard from "./TiltCard";
 
-function collectionsHome() {
+function CollectionsHome() {
   return (
-    <main>
-      <div className="flex flex-row items-center gap-12 px-60">
-        <div>
-          <TiltCard image={reviewsImage.src} title="reviews" />
-        </div>
-        <div className="text-center items-center text-2xl gap-6 flex flex-col">
-          <p>Шукаєш щсоь під настрій?</p>
-          <h2 className="uppercase font-pixel text-7xl bg-linear-to-r from-[#5B5BB8] to-[#3FAFF2] bg-clip-text text-transparent">
+    <section aria-labelledby="collections-home-title" className="page-container">
+      <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
+        <TiltCard image={reviewsImage} title="Ігрові добірки" />
+
+        <div className="flex min-w-0 flex-col items-center gap-5 text-center lg:gap-6">
+          <p className="text-lg text-main/75 sm:text-2xl">
+            Шукаєш щось під настрій?
+          </p>
+          <h2
+            id="collections-home-title"
+            className="break-words bg-linear-to-r from-[#5B5BB8] to-[#3FAFF2] bg-clip-text font-pixel text-[clamp(2rem,6vw,4.5rem)] uppercase leading-tight text-transparent"
+          >
             ігрові добірки
           </h2>
           <Link
             href="/collections"
-            className="flex items-center gap-2 bg-bg-alt/75 hover:bg-zinc-700/50 transition-all uppercase duration-500 text-sm py-2 px-4 text-main rounded-xl"
+            className="flex min-h-11 items-center gap-2 rounded-xl bg-bg-alt/75 px-4 py-2 text-sm uppercase text-main transition-colors hover:bg-bg-alt hover:text-accent"
           >
-            Переглянути добірки <FaArrowRight size={15} />
+            Переглянути добірки <FaArrowRight aria-hidden="true" size={15} />
           </Link>
         </div>
       </div>
-    </main>
+    </section>
   );
 }
 
-export default collectionsHome;
+export default CollectionsHome;

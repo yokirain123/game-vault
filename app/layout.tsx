@@ -13,7 +13,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="h-full antialiased" suppressHydrationWarning>
+    <html lang="uk" className="h-full antialiased" suppressHydrationWarning>
       <head>
         <Script id="theme-script" strategy="beforeInteractive">
           {`
@@ -35,7 +35,7 @@ export default function RootLayout({
         </Script>
       </head>
 
-      <body className="min-h-full flex flex-col scrollbar-none">
+      <body className="flex min-h-full min-w-0 flex-col">
         {children}
       </body>
     </html>
