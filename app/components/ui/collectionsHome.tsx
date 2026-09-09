@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { FaArrowRight } from "react-icons/fa6";
-import reviewsImage from "../images/reviews.png";
+import reviewsImage from "../images/collections.png";
 import TiltCard from "./TiltCard";
 
 function CollectionsHome() {
